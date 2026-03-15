@@ -13,7 +13,7 @@ class MyPlugin(Star):
         """可选择实现异步的插件初始化方法，当实例化该插件类之后会自动调用该方法。"""
 
     @filter.command("send")
-    # @filter.event_message_type(filter.EventMessageType.PRIVATE_MESSAGE)
+    @filter.event_message_type(filter.EventMessageType.PRIVATE_MESSAGE)
     async def send_to_group(self, event: AstrMessageEvent):
         """
         私聊指令：/send 群号 要说的话
