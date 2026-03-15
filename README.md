@@ -1,26 +1,17 @@
-📦 Simple Relay
-一个轻量的 AstrBot 插件，让你在私聊里指挥机器人，往指定群聊发消息。
+📬 Simple Relay
+<span style="font-size: 18px; font-weight: 500;"></span>
 
-💬 指令说明
-在私聊中向机器人发送以下格式的消息即可：
-
-text
-/send 群号 你想说的话
-✨ 示例
-你发送（私聊）	机器人做的事
-/send 441262019 晚上好	往群 441262019 发送「晚上好」
-/send 12345678 明天下午三点开会	往群 12345678 发送「明天下午三点开会」
-/send 87654321 图片.jpg（暂不支持图片）	仅支持文字消息
+<p align="center"> <img src="https://img.shields.io/badge/version-0.1.1-blue.svg" alt="版本"> <img src="https://img.shields.io/badge/AstrBot-%3E%3D4.17.0-green.svg" alt="AstrBot版本"> <img src="https://img.shields.io/badge/license-MIT-orange.svg" alt="许可证"> </p><p align="center"> <b>🏃 私聊指挥机器人 · 📢 往指定群发消息 · ⚡ 轻量无依赖</b> </p>
+✨ 功能亮点
+<table style="width: 100%; border: none; border-collapse: collapse;"> <tr> <td style="width: 33%; padding: 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <div style="font-size: 24px; margin-bottom: 8px;">🔐</div> <div style="font-weight: 600; margin-bottom: 4px;">私聊触发</div> <div style="font-size: 14px; color: #57606a;">只有你能用，群聊里不响应</div> </td> <td style="width: 33%; padding: 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8; margin-left: 12px;"> <div style="font-size: 24px; margin-bottom: 8px;">🎯</div> <div style="font-weight: 600; margin-bottom: 4px;">精准投递</div> <div style="font-size: 14px; color: #57606a;">指定群号，消息直达</div> </td> <td style="width: 33%; padding: 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8; margin-left: 12px;"> <div style="font-size: 24px; margin-bottom: 8px;">🧩</div> <div style="font-weight: 600; margin-bottom: 4px;">轻量简洁</div> <div style="font-size: 14px; color: #57606a;">纯文本转发，无复杂依赖</div> </td> </tr> </table>
+📖 使用方法
+<div style="background: #f6f8fa; padding: 16px; border-radius: 8px; border: 1px solid #e1e4e8; margin: 16px 0;"> <div style="font-weight: 600; margin-bottom: 8px;">📋 指令格式</div> <code style="background: #fff; padding: 8px 12px; display: block; border-radius: 6px; border: 1px solid #d0d7de; font-size: 16px;"> /send 群号 要发送的内容 </code> </div>
+实际例子
+<table style="width: 100%; border-collapse: collapse;"> <thead> <tr style="background: #f6f8fa; border-bottom: 2px solid #d0d7de;"> <th style="padding: 10px; text-align: left;">你发送的消息</th> <th style="padding: 10px; text-align: left;">机器人的动作</th> </tr> </thead> <tbody> <tr style="border-bottom: 1px solid #e1e4e8;"> <td style="padding: 10px;"><code>/send 123456789 晚上好</code></td> <td style="padding: 10px;">➡️ 往群 <code>123456789</code> 发送「晚上好」</td> </tr> <tr style="border-bottom: 1px solid #e1e4e8;"> <td style="padding: 10px;"><code>/send 12345678 明天下午三点开会</code></td> <td style="padding: 10px;">➡️ 往群 <code>12345678</code> 发送「明天下午三点开会」</td> </tr> <tr> <td style="padding: 10px;"><code>/send 87654321 有人吗</code></td> <td style="padding: 10px;">➡️ 往群 <code>87654321</code> 发送「有人吗」</td> </tr> </tbody> </table>
 🎯 适用场景
-不想进群，但需要往群里发消息
-
-跨群通知、消息同步
-
-定时任务配合（需配合其他插件）
-
-📌 注意事项
-✅ 机器人必须提前加入目标群
-
-✅ 仅支持私聊触发，群聊内发送指令无效
-
-⚠️ 当前版本仅支持纯文本消息，暂不支持图片、@等功能
+<ul style="list-style-type: none; padding: 0;"> <li style="margin-bottom: 12px; padding: 8px 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <span style="font-weight: 600;">👤 不想进群</span> — 人不在群里，但需要往群里发消息 </li> <li style="margin-bottom: 12px; padding: 8px 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <span style="font-weight: 600;">📢 跨群通知</span> — 一个指令，消息直达多个群（需多次调用） </li> <li style="margin-bottom: 12px; padding: 8px 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <span style="font-weight: 600;">🤖 自动化配合</span> — 搭配定时任务插件，实现自动群发 </li> </ul>
+⚠️ 注意事项
+<div style="background: #fff8c5; padding: 16px; border-radius: 8px; border: 1px solid #f0b400; margin: 16px 0;"> <table style="width: 100%; border-collapse: collapse;"> <tr> <td style="padding: 8px; width: 30%; font-weight: 600;">✅ 机器人必须在群内</td> <td style="padding: 8px;">否则消息发送失败</td> </tr> <tr> <td style="padding: 8px; font-weight: 600;">✅ 仅私聊生效</td> <td style="padding: 8px;">群聊里发指令不会触发</td> </tr> <tr> <td style="padding: 8px; font-weight: 600;">⚠️ 纯文本仅支持</td> <td style="padding: 8px;">暂不支持图片、@、表情等</td> </tr> <tr> <td style="padding: 8px; font-weight: 600;">🔧 平台自动适配</td> <td style="padding: 8px;">支持 QQ官方、NapCat、OneBot 等</td> </tr> </table> </div>
+📦 安装方式
+<div style="display: flex; gap: 20px; margin: 20px 0;"> <div style="flex: 1; padding: 16px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px;">📡 从 GitHub 安装</div> <ol style="margin: 0; padding-left: 20px;"> <li style="margin-bottom: 8px;">复制仓库地址：<br><code>https://github.com/Alien-Star/simple-relay</code></li> <li style="margin-bottom: 8px;">AstrBot WebUI → 插件管理 → 从 Git 安装</li> <li>粘贴地址，点击安装</li> </ol> </div> <div style="flex: 1; padding: 16px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <div style="font-weight: 600; font-size: 18px; margin-bottom: 12px;">📂 手动安装</div> <ol style="margin: 0; padding-left: 20px;"> <li style="margin-bottom: 8px;">在 <code>data/plugins/</code> 下创建 <code>simple_relay</code></li> <li style="margin-bottom: 8px;">将 <code>main.py</code> 放入该文件夹</li> <li>在 WebUI 中重载插件</li> </ol> </div> </div>
+<div align="center" style="margin: 30px 0; padding: 20px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;"> <div style="font-size: 14px; color: #57606a; margin-bottom: 10px;">📄 MIT License © Alien-Star</div> <div> <span style="background: #21262d; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 14px;">⭐ 如果对你有帮助，欢迎给个 Star</span> </div> </div>
