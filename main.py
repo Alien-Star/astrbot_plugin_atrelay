@@ -1,5 +1,6 @@
 from astrbot.api.event import filter, AstrMessageEvent, MessageEventResult
 from astrbot.api.star import Context, Star, register
+from astrbot.api.message_components import Plain, At
 from astrbot.api import logger
 
 @register("at_relay", "AlienStar", "艾特群友", "0.1.0")
