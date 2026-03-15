@@ -1,14 +1,26 @@
-# astrbot-plugin-helloworld
+📦 Simple Relay
+一个轻量的 AstrBot 插件，让你在私聊里指挥机器人，往指定群聊发消息。
 
-AstrBot 插件模板 / A template plugin for AstrBot plugin feature
+💬 指令说明
+在私聊中向机器人发送以下格式的消息即可：
 
-> [!NOTE]
-> This repo is just a template of [AstrBot](https://github.com/AstrBotDevs/AstrBot) Plugin.
-> 
-> [AstrBot](https://github.com/AstrBotDevs/AstrBot) is an agentic assistant for both personal and group conversations. It can be deployed across dozens of mainstream instant messaging platforms, including QQ, Telegram, Feishu, DingTalk, Slack, LINE, Discord, Matrix, etc. In addition, it provides a reliable and extensible conversational AI infrastructure for individuals, developers, and teams. Whether you need a personal AI companion, an intelligent customer support agent, an automation assistant, or an enterprise knowledge base, AstrBot enables you to quickly build AI applications directly within your existing messaging workflows.
+text
+/send 群号 你想说的话
+✨ 示例
+你发送（私聊）	机器人做的事
+/send 441262019 晚上好	往群 441262019 发送「晚上好」
+/send 12345678 明天下午三点开会	往群 12345678 发送「明天下午三点开会」
+/send 87654321 图片.jpg（暂不支持图片）	仅支持文字消息
+🎯 适用场景
+不想进群，但需要往群里发消息
 
-# Supports
+跨群通知、消息同步
 
-- [AstrBot Repo](https://github.com/AstrBotDevs/AstrBot)
-- [AstrBot Plugin Development Docs (Chinese)](https://docs.astrbot.app/dev/star/plugin-new.html)
-- [AstrBot Plugin Development Docs (English)](https://docs.astrbot.app/en/dev/star/plugin-new.html)
+定时任务配合（需配合其他插件）
+
+📌 注意事项
+✅ 机器人必须提前加入目标群
+
+✅ 仅支持私聊触发，群聊内发送指令无效
+
+⚠️ 当前版本仅支持纯文本消息，暂不支持图片、@等功能
