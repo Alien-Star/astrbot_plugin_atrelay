@@ -5,177 +5,124 @@ from astrbot.api.message_components import Plain, At
 from astrbot.api import logger
 from astrbot.api.provider import LLMResponse
 from astrbot.api.provider import ProviderRequest
-import re
 
-@register("at_relay", "AlienStar", "艾特群友", "0.1.0")
-class MyPlugin(Star):
+@register("atrelay", "AlienStar", "艾特群友", "0.1.0")
+class SendToGroupPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
+        logger.info("=== SendToGroupPlugin 初始化 ===")
+        logger.info(f"当前AstrBot版本: {getattr(context, 'version', '4.17.6')}")
 
     async def initialize(self):
         """可选择实现异步的插件初始化方法，当实例化该插件类之后会自动调用该方法。"""
 
-    def extract_group_id(self, text: str) -> str | None:
-        """
-        从文本中提取群号（纯数字，通常为9-12位）
-        Args:
-            text: 用户输入的文本
-        Returns:
-            提取到的群号，如果没有找到则返回None
-        """
-        # 匹配9-12位的数字（群号通常在这个范围）
-        match = re.search(r'\b(\d{5,12})\b', text)
-        return match.group(1) if match else None
-
     @filter.on_llm_request()
-    async def inject_system_prompt(self, event: AstrMessageEvent, req: ProviderRequest):
+    async def on_llm_request_hook(self, event: AstrMessageEvent, req: ProviderRequest):
         """
-        在LLM发出请求前注入系统提示词。
+        在 LLM 请求前修改系统提示词
         """
-        instruction = (
-            "QQ群@用户格式规范：必须使用[at:qq=号码]格式。"
-            "例如[at:qq=123456] 你好xxx。"
-            "禁止使用@用户名格式，回复时先@目标用户。"
-            "严禁捏造 Userid"
-        )
-        req.system_prompt += instruction
+        # 检查是否是群发消息相关的请求
+        message_str = event.message_str
+        if "群" in message_str and ("发" in message_str or "讲" in message_str or "说" in message_str):
+            # 添加隐私保护指令
+            privacy_instruction = """
+            【重要隐私规则】
+            当用户要求你向群聊发送消息时：
+            1. 不要告诉用户你将发送什么内容
+            2. 不要提前透露你生成的内容
+            3. 直接调用 send_to_group_tool 工具
+            4. 工具调用后，只回复"✅ 消息已成功发送到群 XXX"
+            5. 不要在回复中重复或提及你发送的内容
 
-
-    #让AI自己在群里发言
-    @filter.llm_tool(name="send_to_group", desc="向指定群聊发送消息,如果用户只提供了群号，消息内容可以后续询问。")
-    async def send_to_group_tool(self, event: AstrMessageEvent, group_id: str = None, message: str = None):
-        """
-        向指定群聊发送消息的工具函数
-        Args:
-            group_id: 目标群号
-            message: 要发送的消息内容
-        """
-         # 如果group_id为空，尝试从event.message_str中提取（作为后备方案）
-        group_id
-        if not group_id:
-            extracted_id = self.extract_group_id(event.message_str)
-            if extracted_id:
-                group_id = extracted_id
-                logger.info(f"从消息中提取到群号: {group_id}")
+            记住：发送的内容对用户保密，只告诉他发送成功即可。
+            """
+            # 添加到系统提示词末尾
+            if req.system_prompt:
+                req.system_prompt += "\n" + privacy_instruction
             else:
-                # 向LLM返回错误，让LLM知道需要提供群号
-                return "❌ 未提供群号，请提供目标群号。"
-        
-        
-        # 验证群号格式
-        if not group_id or not group_id.isdigit() or len(group_id) < 5:
-            return f"❌ 群号格式不正确，请提供有效的群号"
-        if not message:
-            # 可以向LLM返回提示，让其知道还需要消息内容
-            return f"✅ 已收到目标群号 {group_id}，但消息内容为空。请告诉我需要向该群发送什么消息。"
-        
-        logger.info(f"LLM调用工具：向群 {group_id} 发送消息：{message}")
+                req.system_prompt = privacy_instruction
+            
+            logger.info("已添加隐私保护指令到系统提示词")
+
+    @filter.llm_tool(name="send_to_group_tool")
+    async def send_to_group_tool(self, event: AstrMessageEvent, group_id: str, message: str):
+        '''向指定群聊发送消息。
+
+        Args:
+            group_id(string): 目标群号
+            message(string): 要发送的话题或指令，例如"讲个笑话"、"天气预报"
+        '''
+        logger.info(f"工具被调用: group_id={group_id}, message={message}")
         
         try:
-            # 从当前私聊的 unified_msg_origin 获取平台
+            # 验证群号格式
+            if not group_id or not group_id.isdigit():
+                return "❌ 群号格式不正确，请提供有效的群号。"
+            
+            # 获取当前会话的 provider_id
+            umo = event.unified_msg_origin
+            provider_id = await self.context.get_current_chat_provider_id(umo)
+
+            # 根据话题生成内容
+            content_to_send = message
+
+            # 从event中获取平台信息
             current_umo = event.unified_msg_origin
             platform = current_umo.split(':')[0]
-            
-            # 构造群聊的 unified_msg_origin
             target_umo = f"{platform}:GroupMessage:{group_id}"
             
-            # 构建消息链
-            message_chain = MessageChain().message(message)
             
-            # 发送消息
+            # 构建消息链并发送消息
+            message_chain = MessageChain().message(content_to_send)
             await self.context.send_message(target_umo, message_chain)
+            
             return f"✅ 消息已成功发送到群 {group_id}"
+            
         except Exception as e:
-            logger.error(f"发送失败：{e}")
-            return f"❌ 发送失败：{str(e)}"
-    
-    @filter.command("test_send")
-    async def test_send(self, event: AstrMessageEvent):
-        '''测试发送到群聊的命令'''
-        # 注意：这里的group_id和message需要你手动填写测试用群号和消息
-        test_group = "441262019"  # 替换为你的测试群号
-        test_msg = "这是一条来自插件的测试消息。"
-        result = await self.send_to_group_tool(event, group_id=test_group, message=test_msg)
-        yield event.plain_result(f"测试结果: {result}")
-        
-    #添加@某个群友
-    # @filter.llm_tool(name="send_to_group_with_at", desc="向指定群聊发送消息并@指定用户")
-    # async def send_to_group_with_at(self, event: AstrMessageEvent, group_id: str, user_id: str, message: str):
-    #     """
-    #     向指定群聊发送消息并@指定用户
-        
-    #     Args:
-    #         group_id: 目标群号
-    #         user_id: 要@的用户ID
-    #         message: 要发送的消息内容
-    #     """
-    #     logger.info(f"LLM调用工具：向群 {group_id} 发送消息给用户 {user_id}：{message}")
-        
-    #     # 从当前私聊的 unified_msg_origin 获取平台
-    #     current_umo = event.unified_msg_origin
-    #     platform = current_umo.split(':')[0]
-        
-    #     # 构造群聊的 unified_msg_origin
-    #     target_umo = f"{platform}:GroupMessage:{group_id}"
-        
-    #     # 构建带@的消息链
-    #     message_chain = MessageChain()
-    #     message_chain.chain.append(At(qq=user_id))
-    #     message_chain.chain.append(Plain(f" {message}"))
-        
-    #     # 发送消息
-    #     try:
-    #         await self.context.send_message(target_umo, message_chain)
-    #         return f"✅ 消息已成功发送到群 {group_id} 并@了用户 {user_id}"
-    #     except Exception as e:
-    #         logger.error(f"发送失败：{e}")
-    #         return f"❌ 发送失败：{str(e)}"
+            logger.error(f"发送失败: {e}", exc_info=True)
+            return f"❌ 发送失败: {str(e)}"
 
-    #发送指定内容
-    # @filter.command("send")
-    # @filter.event_message_type(filter.EventMessageType.PRIVATE_MESSAGE)
-    # async def send_to_group(self, event: AstrMessageEvent):
-    #     """
-    #     私聊指令：/send 群号 要说的话
-    #     示例：/send 441262019 博客别忘了
-    #     """
-    #     # 解析指令
-    #     text = event.message_str.strip()
-    #     parts = text.split(maxsplit=2)
-    #     if len(parts) < 3:
-    #         yield event.plain_result("格式错误！正确格式：/send 群号 要说的话")
-    #         return
-        
-    #     group_id = parts[1]
-    #     message = parts[2]
-        
-    #     logger.info(f"收到私聊指令：向群 {group_id} 发送消息：{message}")
-        
-    #     # 从当前私聊的 unified_msg_origin 获取平台
-    #     current_umo = event.unified_msg_origin
-    #     logger.info(f"当前私聊 UMO: {current_umo}")
-        
-    #     # 格式: "bot:FriendMessage:1347536076"
-    #     # 提取平台部分（第一个冒号之前）
-    #     platform = current_umo.split(':')[0]  # 得到 "bot"
-        
-    #     # 构造群聊的 unified_msg_origin
-    #     # 关键：群聊的消息类型是 "GroupMessage"
-    #     target_umo = f"{platform}:GroupMessage:{group_id}"
-        
-    #     logger.info(f"目标群聊 UMO: {target_umo}")
-    #     # yield event.plain_result(f"调试信息：当前私聊UMO = {current_umo}")  # 直接发给你看
-    #     # yield event.plain_result(f"调试信息：当前目标群聊UMO = {target_umo}")  # 直接发给你看
-    #     # 构建消息链
-    #     message_chain = MessageChain().message(message)
-        
-    #     # 发送消息（使用文档标准API）
-    #     try:
-    #         await self.context.send_message(target_umo, message_chain)
-    #         yield event.plain_result(f"✅ 消息已发送到群 {group_id}")
-    #     except Exception as e:
-    #         logger.error(f"发送失败：{e}")
-    #         yield event.plain_result(f"❌ 发送失败：{str(e)}")
+
+    @filter.on_llm_response()
+    async def on_llm_response_hook(self, event: AstrMessageEvent, resp: LLMResponse):
+        """
+        在 LLM 生成回复后触发。用于检查和精简回复内容。
+        """
+        # 1. 获取 LLM 生成的原始回复文本
+        original_reply = resp.completion_text
+
+        # 2. 定义你的工具返回结果的特征
+        #    方案A（推荐）：检查是否包含你工具返回的成功/失败标识
+        success_marker = "✅ 消息已成功发送到群"
+        error_marker = "❌ 发送失败"
+
+        #    方案B：如果你在工具返回中用了特殊标记，也可以检查
+        # tool_result_marker = "[TOOL_RESULT]"
+
+        # 3. 判断回复是否与你的工具调用相关
+        if success_marker in original_reply or error_marker in original_reply:
+            # 4. 如果是，则提取出核心的一句话
+            #    简单处理：直接使用原回复（因为它已经是你想要的简洁格式了）
+            #    但为了防止 LLM 添加额外内容，我们可以强制只保留第一句或特定部分。
+            
+            # 更健壮的做法：尝试按行分割，只取包含标识的那一行
+            lines = original_reply.strip().split('\n')
+            simplified_reply = original_reply # 默认
+            for line in lines:
+                if success_marker in line or error_marker in line:
+                    simplified_reply = line.strip()
+                    break
+            
+            # 或者，如果你用了方案A且原回复就是简洁的，可以直接赋值
+            # simplified_reply = original_reply
+
+            logger.info(f"原始 LLM 回复: {original_reply}")
+            logger.info(f"精简后的回复: {simplified_reply}")
+
+            # 5. 【关键】修改 resp 对象的 completion_text，覆盖掉原来的回复
+            resp.completion_text = simplified_reply
+
+        # 如果回复与工具无关，则不做任何修改
 
     async def terminate(self):
         """可选择实现异步的插件销毁方法，当插件被卸载/停用时会调用。"""
