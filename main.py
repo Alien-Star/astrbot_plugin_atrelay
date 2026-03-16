@@ -1,5 +1,6 @@
 import json
 import time
+import os
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.event import MessageChain
 from astrbot.api.star import Context, Star, register
@@ -9,12 +10,12 @@ from astrbot.api.provider import LLMResponse
 from astrbot.api.provider import ProviderRequest
 from astrbot.core.platform.sources.aiocqhttp.aiocqhttp_message_event import AiocqhttpMessageEvent
 
-@register("atrelay", "AlienStar", "艾特群友", "0.3.0")
+@register("atrelay", "AlienStar", "艾特群友", "0.3.2")
 class SendToGroupPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
+
         logger.info("=== SendToGroupPlugin 初始化 ===")
-        logger.info(f"当前AstrBot版本: {getattr(context, 'version', '4.17.6')}")
 
     async def initialize(self):
         """可选择实现异步的插件初始化方法，当实例化该插件类之后会自动调用该方法。"""
@@ -48,13 +49,14 @@ class SendToGroupPlugin(Star):
             logger.info("已添加隐私保护指令到系统提示词")
 
     @filter.llm_tool(name="send_to_group_tool")
-    async def send_to_group_tool(self, event: AstrMessageEvent, group_id: str, message: str, at_user: str = ""):
+    async def send_to_group_tool(self, event: AstrMessageEvent, group_id: str, message: str, at_user: str):
         '''
         向指定群聊发送消息。
 
         Args:
             group_id(string): 目标群号
             message(string): 要发送的话题或指令，例如"讲个笑话"、"天气预报"
+            at_user(string): 用于记录要@的用户的QQ号(可选)
         '''
         logger.info(f"工具被调用: group_id={group_id}, message={message}")
         
