@@ -18,11 +18,6 @@
 
 <table style="width: 100%; border: none; border-collapse: collapse;">
   <tr>
-    <td style="width: 33%; padding: 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8;">
-      <div style="font-size: 24px; margin-bottom: 8px;">🔐</div>
-      <div style="font-weight: 600; margin-bottom: 4px;">私聊触发</div>
-      <div style="font-size: 14px; color: #57606a;">只有你能用，群聊里不响应</div>
-    </td>
     <td style="width: 33%; padding: 12px; background: #f6f8fa; border-radius: 8px; border: 1px solid #e1e4e8; margin-left: 12px;">
       <div style="font-size: 24px; margin-bottom: 8px;">👥</div>
       <div style="font-weight: 600; margin-bottom: 4px;">精准艾特</div>
