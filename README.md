@@ -4,7 +4,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="版本">
-  <img src="https://img.shields.io/badge/AstrBot-%3E%3D>=4.17.0-green.svg" alt="AstrBot版本">
+  <img src="https://img.shields.io/badge/AstrBot-%3E%3D4.17.0-green.svg" alt="AstrBot版本">
   <img src="https://img.shields.io/badge/license-MIT-orange.svg" alt="许可证">
 </p>
 
