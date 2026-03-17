@@ -152,6 +152,10 @@
   </thead>
   <tbody>
     <tr style="border-bottom: 1px solid #e1e4e8;">
+      <td style="padding: 8px;"><code>v1.0.0</code></td>
+      <td style="padding: 8px;">🚀 修复返回错误bug</td>
+    </tr>
+    <tr style="border-bottom: 1px solid #e1e4e8;">
       <td style="padding: 8px;"><code>v0.3.5</code></td>
       <td style="padding: 8px;">✨ 支持 @ 功能，消息构建优化</td>
     </tr>
