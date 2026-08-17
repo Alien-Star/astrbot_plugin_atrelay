@@ -11,6 +11,11 @@
 </p>
 
 ---
+### 测试的AI模型有点拉胯而且看起来不太友善，但任务说的具体一点应该还是能完成的。
+
+<img width="480" height="1027" alt="image" src="https://github.com/user-attachments/assets/ed36b26c-09bd-43e5-b3f5-0cfa681b22f4" /><img width="473" height="615" alt="image" src="https://github.com/user-attachments/assets/f7ae8102-3dcf-487e-a0ee-13eeeb2e7e73" /><img width="337" height="270" alt="image" src="https://github.com/user-attachments/assets/fa2e1029-2971-4c94-9009-a9ac9be193ca" />
+
+
 
 ## ✨ 功能亮点
 
