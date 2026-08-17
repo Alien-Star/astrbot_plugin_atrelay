@@ -1,0 +1,14 @@
+{
+  "enable_llm_prompt_injection": {
+    "description": "是否在 LLM 请求中注入消息转发工具使用规则",
+    "hint": "关闭后不再根据用户消息关键词追加系统提示词，LLM 仍可正常调用工具。",
+    "type": "bool",
+    "default": true
+  },
+  "enable_response_simplification": {
+    "description": "是否精简 LLM 对工具调用结果的回复",
+    "hint": "开启后，当回复中包含发送成功/失败标记时，只保留包含标记的那一行。",
+    "type": "bool",
+    "default": true
+  }
+}
